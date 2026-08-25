@@ -25,7 +25,7 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
                             aria-expanded="false">
@@ -34,36 +34,50 @@
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="#">English</a>
                             <a class="dropdown-item" href="#">French</a>
-                            
+
                         </div>
                     </li>
-                    
+
                 </ul>
-                
+
             </div>
 
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
-                    
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
                             aria-expanded="false">
                             More option
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Add customer</a>
+                            <a class="dropdown-item" href="{% url 'add-customer' %}">Add customer</a>
                             <a class="dropdown-item" href="#">Add admin</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Statistic</a>
                         </div>
                     </li>
-                    
+
                 </ul>
-                
+
             </div>
         </nav>
     </header>
+
+    <div class="container">
+        <div class="warpper">
+            {% for message in messages%}
+            <div class="alert {{message.tags}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true">& times</span>
+
+                </button>
+                {{ message|safe }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
     <!-- fin du header -->
     <div class="container">
 
