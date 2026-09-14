@@ -134,9 +134,9 @@ class Customer(models.Model):
 class Invoice(models.Model):
 
     INVOICE_TYPE_CHOICES = (
-        ('R', 'RECU'),
-        ('P', 'PROFORMA FACTURE'),
-        ('F', 'FACTURE'),
+        ('R', 'RECEIPT'),
+        ('P', 'PROFORMA INVOICE'),
+        ('I', 'INVOICE'),
     )
 
     customer = models.ForeignKey(
