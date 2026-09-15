@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% load static %}
-  
+
 {% block content %}
 <br><br>
 <div class="row">
@@ -14,7 +14,7 @@
    </a>
 
    <a href="{% url 'add-customer' %}" class="btn col-md-4 btn-primary">
-       Register a new customer <span class="badge text-bg-secondary"></span>
+      Register a new customer <span class="badge text-bg-secondary"></span>
    </a>
 
 </div>
@@ -53,7 +53,7 @@
                <img src="{% static 'images/icon-no.svg' %}" alt="False">
                {% endif %}
             </td>
-            <td>{{facture.invoice_type}}</td>
+            <td>{{facture.get_invoice_type_display}}</td>
             <td>
                <a href="#" title="Detail" class="badge text-white bg-success">View</a>
 
@@ -63,20 +63,61 @@
                </button>
 
                <button id="btn-invoice-mod" type="button" data-toggle="modal" title="Modifier" data-target="#modifier"
-                  data-id="{{facture.pk}}" data-customer="{{facture.customer.name}}"
-                  class="badge text-dark bg-warning"> Modify
+                  data-id="{{facture.pk}}" data-customer="{{facture.customer.name}}" class="badge text-dark bg-warning">
+                  Modify
                </button>
             </td>
          </tr>
 
          {% endfor %}
 
+         {% if invoices.has_other_pages %}
+
+         <div class="btn-group" role="group" aria-label="Item pagination">
+            {%if invoices.has_previous %}
+
+            <a href="?page = {{invoices.previous_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+            {% endif %}
+
+            {% for page_number in invoices.paginator.page_range %}
+
+            {% if invoices.number == page_number %}
+            <button class=" btn btn-outline-primary active">
+               <span> {{ page_number}} <span class="sr-only">(current)</span> </span>
+
+            </button>
+
+            {% else %}
+
+            <a href="?page={{page_number}}" class="btn btn-outline-primary">
+
+               {{page_number}}
+
+            </a>
+
+            {% endif %}
+
+
+            {% endfor %}
+
+            {% if invoices.has_next %}
+
+            <a href="?page = {{invoices.next_page_number }}" class="btn btn-outline-primary">&laquo;</a>
+
+            {% endif %}
+
+         </div>
+
+
 
          {% else %}
 
-         
-         
+
+
          <p class="text-center text-white">No invoice found.</p>
+
+         {% endif %}
+
          {% endif %}
 
 
@@ -102,7 +143,8 @@
 
                <input name="id_modified" type="hidden" id="id_modified">
 
-               <label id="label_id" class="text-dark checkbox-inline"> <strong id="strong_id"> This bill has been paid?</strong></label>
+               <label id="label_id" class="text-dark checkbox-inline"> <strong id="strong_id"> This bill has been
+                     paid?</strong></label>
 
                <input type="radio" id="html" name="modified" value="True">
                <label class="text-white bg-primary" for="html">Yes</label>
@@ -136,7 +178,8 @@
             <form method="post">
                {% csrf_token %}
                <input name="id_supprimer" type="hidden" id="id_supprimer">
-               <label id="label_id_s" class="text-dark checkbox-inline"> <strong id="strong_id_s">Are you sure you want to delete the invoice  ?</strong></label>
+               <label id="label_id_s" class="text-dark checkbox-inline"> <strong id="strong_id_s">Are you sure you want
+                     to delete the invoice ?</strong></label>
 
                <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -156,7 +199,7 @@
 
    // modification
 
-   $(document).on('click', '#btn-invoice-mod', function(){
+   $(document).on('click', '#btn-invoice-mod', function () {
       let invoice_id = $(this).data('id');
       let customer = $(this).data('customer');
       $('#id_modified').val(invoice_id);
@@ -165,7 +208,7 @@
 
    // deleting of invoice
 
-   $(document).on('click', '#btn-invoice-sup', function(){
+   $(document).on('click', '#btn-invoice-sup', function () {
       let invoice_id = $(this).data('id');
       let customer = $(this).data('customer');
       $('#id_supprimer').val(invoice_id);
@@ -179,11 +222,11 @@
 
 <script>
 
-   $(document).ready(function(){
-      $("#search").on("keyup", function(){
+   $(document).ready(function () {
+      $("#search").on("keyup", function () {
          var value = $(this).val().toLowerCase();
-         $("#myTable tr").filter(function(){
-            $(this).toggle($(this).text().toLocaleLowerCase().indexOf(value)>-1)
+         $("#myTable tr").filter(function () {
+            $(this).toggle($(this).text().toLocaleLowerCase().indexOf(value) > -1)
          });
       });
    });
