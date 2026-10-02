@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture #{{ obj.id }}</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 1.5cm;
+            @bottom-right {
+                content: "Page " counter(page) " / " counter(pages);
+                font-family: Helvetica, Arial, sans-serif;
+                font-size: 8pt;
+                color: #888888;
+            }
+        }
+
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #333333;
+            font-size: 10pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-table {
+            width: 100%;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #2f71c1;
+            padding-bottom: 15px;
+        }
+
+        .company-name {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #1a233a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .company-subtitle {
+            font-size: 9pt;
+            color: #666666;
+            margin-top: 3px;
+        }
+
+        .invoice-title {
+            text-align: right;
+            font-size: 18pt;
+            font-weight: bold;
+            color: #2f71c1;
+            text-transform: uppercase;
+        }
+
+        .invoice-ref {
+            text-align: right;
+            font-size: 10pt;
+            color: #555555;
+            margin-top: 4px;
+        }
+
+        .details-table {
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .details-box {
+            background-color: #f7f9fc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 4px;
+        }
+
+        .section-label {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #2f71c1;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 3px;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .items-table th {
+            background-color: #1a233a;
+            color: #ffffff;
+            font-size: 9pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 8px 10px;
+            border: 1px solid #1a233a;
+        }
+
+        .items-table td {
+            padding: 8px 10px;
+            font-size: 9.5pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .items-table tr.even {
+            background-color: #f8fafc;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .summary-table {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .total-box {
+            background-color: #1a233a;
+            color: #ffffff;
+            padding: 10px;
+            font-size: 13pt;
+            font-weight: bold;
+            text-align: right;
+            border-radius: 3px;
+        }
+
+        .badge-paid {
+            display: inline-block;
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 4px 10px;
+            font-weight: bold;
+            font-size: 9pt;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .badge-unpaid {
+            display: inline-block;
+            background-color: #dc2626;
+            color: #ffffff;
+            padding: 4px 10px;
+            font-weight: bold;
+            font-size: 9pt;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .comments-section {
+            background-color: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            padding: 8px 12px;
+            font-size: 9pt;
+            color: #92400e;
+            margin-top: 15px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            text-align: center;
+            font-size: 8.5pt;
+            color: #777777;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <table class="header-table">
+        <tr>
+            <td style="width: 55%; vertical-align: top;">
+                <div class="company-name">Tidiane Service</div>
+                <div class="company-subtitle">Système Professionnel de Gestion des Factures</div>
+                <div style="font-size: 8.5pt; color: #666; margin-top: 5px;">
+                    Email: contact@tidianeservice.com &bull; Tél: (+226) 70 00 00 00<br>
+                    Ouagadougou, Burkina Faso
+                </div>
+            </td>
+            <td style="width: 45%; vertical-align: top; text-align: right;">
+                <div class="invoice-title">{{ obj.get_invoice_type_display }}</div>
+                <div class="invoice-ref">
+                    <strong>N&deg; Facture :</strong> #{{ obj.id }}<br>
+                    <strong>Date d'émission :</strong> {{ obj.invoice_date_time|date:"d/m/Y H:i" }}<br>
+                    <strong>Statut :</strong>
+                    {% if obj.paid %}
+                        <span class="badge-paid">PAYÉ</span>
+                    {% else %}
+                        <span class="badge-unpaid">IMPAYÉ</span>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Client & Order Info -->
+    <table class="details-table">
+        <tr>
+            <td style="width: 50%; vertical-align: top; padding-right: 10px;">
+                <div class="details-box">
+                    <div class="section-label">Informations Client</div>
+                    <div style="font-weight: bold; font-size: 11pt; color: #1a233a;">{{ obj.customer.name }}</div>
+                    {% if obj.customer.address %}<div><strong>Adresse :</strong> {{ obj.customer.address }}</div>{% endif %}
+                    {% if obj.customer.city %}<div><strong>Ville :</strong> {{ obj.customer.city }} {% if obj.customer.zip_code %}({{ obj.customer.zip_code }}){% endif %}</div>{% endif %}
+                    {% if obj.customer.phone %}<div><strong>Téléphone :</strong> {{ obj.customer.phone }}</div>{% endif %}
+                    {% if obj.customer.email %}<div><strong>Email :</strong> {{ obj.customer.email }}</div>{% endif %}
+                </div>
+            </td>
+            <td style="width: 50%; vertical-align: top; padding-left: 10px;">
+                <div class="details-box">
+                    <div class="section-label">Détails de Règlement</div>
+                    <div><strong>Enregistré par :</strong> {{ obj.save_by.username|default:"Administrateur" }}</div>
+                    <div><strong>Type de Document :</strong> {{ obj.get_invoice_type_display }}</div>
+                    <div><strong>Date d'impression :</strong> {{ today|date:"d/m/Y" }}</div>
+                    <div style="margin-top: 5px;">
+                        <strong>État :</strong> 
+                        {% if obj.paid %}
+                            <span style="color: #16a34a; font-weight: bold;">Règlement effectué</span>
+                        {% else %}
+                            <span style="color: #dc2626; font-weight: bold;">En attente de règlement</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Articles Table -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 8%;" class="text-center">#</th>
+                <th style="width: 44%;">Description / Article</th>
+                <th style="width: 14%;" class="text-center">Quantité</th>
+                <th style="width: 17%;" class="text-right">Prix Unitaire</th>
+                <th style="width: 17%;" class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr class="{% cycle '' 'even' %}">
+                <td class="text-center">{{ forloop.counter }}</td>
+                <td><strong>{{ article.name }}</strong></td>
+                <td class="text-center">{{ article.quantity }}</td>
+                <td class="text-right">{{ article.unit_price }} FCFA</td>
+                <td class="text-right"><strong>{{ article.get_total }} FCFA</strong></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center" style="padding: 15px; color: #888;">
+                    Aucun article détaillé associé à cette facture.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Totals and Comments -->
+    <table class="summary-table">
+        <tr>
+            <td style="width: 55%; vertical-align: top; padding-right: 15px;">
+                {% if obj.comments %}
+                <div class="comments-section">
+                    <strong>Remarques / Instructions :</strong><br>
+                    {{ obj.comments }}
+                </div>
+                {% endif %}
+            </td>
+            <td style="width: 45%; vertical-align: top;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 10pt; color: #555;">Sous-total :</td>
+                        <td style="padding: 6px 0; font-size: 10pt; text-align: right; font-weight: bold;">
+                            {{ obj.get_total }} FCFA
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px 0; font-size: 10pt; color: #555;">TVA / Taxes :</td>
+                        <td style="padding: 6px 0; font-size: 10pt; text-align: right; color: #888;">
+                            0.00 FCFA
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding-top: 8px;">
+                            <div class="total-box">
+                                <span style="font-size: 10pt; font-weight: normal; margin-right: 15px;">TOTAL À PAYER :</span>
+                                {{ obj.get_total }} FCFA
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Footer -->
+    <div class="footer">
+        Merci pour votre confiance ! Pour toute question concernant cette facture, contactez-nous.<br>
+        Document généré le {{ today|date:"d/m/Y" }} &bull; Système de Facturation Django
+    </div>
+
+</body>
+</html>

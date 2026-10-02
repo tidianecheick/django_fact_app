@@ -1,70 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-<br><br><br><br>
-<h1 class="text-capitalize text-center mx-10 bg-dark text-white">Register a new customer </h1>
-<form action="" method="post">
-    {% csrf_token %}
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="name">Name</label>
-            <input name="name" required type="text" class="form-control" id="name"
-                placeholder="customer first and last name">
-        </div>
-
-        <div class="form-group col-md-4">
-            <label for="email">Email</label>
-            <input name="email" required type="email" class="form-control" id="email" placeholder="customer email">
-        </div>
-
-        <div class="form-group col-md-2">
-            <label for="phone">Phone</label>
-            <input name="phone" required type="number" class="form-control" id="phone"
-                placeholder="customer phone number ">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="sex">Sex</label>
-            <select name="sex" required id="sex" class="form-control">
-                <option>choose the gender..</option>
-                <option value="M">Male</option>
-                <option value="F">Feminine</option>
-            </select>
-        </div>
-
-        <div class="form-group col-md-6">
-            <label for="age">Age</label>
-            <select name="age" required id="age" class="form-control">
-                <option>choose the age range..</option>
-                <option value="0-15">0-15</option>
-                <option value="15-25">15-25</option>
-            </select>
-
-        </div>
-
-
-    </div>
-    <div class="row">
-        <div class="form-group col-md-12">
-            <label for="address">Address</label>
-            <input name="address" type="text" required class="form-control" id="address" placeholder="customer address">
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="city">City</label>
-            <input name="city" required type="text" class="form-control" id="city" placeholder="customer city">
-        </div>
-
-        <div class="form-group col-md-6">
-            <label for="zip">Zip code</label>
-            <input name="zip" required type="text" class="form-control" id="zip" placeholder="customer zip code">
-        </div>
-    </div>
-    <br>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
 <br><br>
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow-lg border-0 mb-5" style="background-color: #272E48; color: #bcd0f7;">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+                <h4 class="mb-0 font-weight-bold">Enregistrer un Nouveau Client</h4>
+                <a href="{% url 'home' %}" class="btn btn-outline-light btn-sm">&larr; Retour à l'accueil</a>
+            </div>
+            <div class="card-body p-4">
+                <form action="{% url 'add-customer' %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-row mb-3">
+                        <div class="form-group col-md-6">
+                            <label for="name" class="font-weight-bold">Nom complet <span class="text-danger">*</span></label>
+                            <input name="name" required type="text" class="form-control" id="name"
+                                placeholder="Ex: Jean Dupont">
+                        </div>
 
+                        <div class="form-group col-md-3">
+                            <label for="email" class="font-weight-bold">Email <span class="text-danger">*</span></label>
+                            <input name="email" required type="email" class="form-control" id="email" 
+                                placeholder="client@exemple.com">
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label for="phone" class="font-weight-bold">Téléphone <span class="text-danger">*</span></label>
+                            <input name="phone" required type="text" class="form-control" id="phone"
+                                placeholder="+226 70 00 00 00">
+                        </div>
+                    </div>
+
+                    <div class="form-row mb-3">
+                        <div class="form-group col-md-6">
+                            <label for="sex" class="font-weight-bold">Sexe / Genre <span class="text-danger">*</span></label>
+                            <select name="sex" required id="sex" class="form-control">
+                                <option value="">Choisir le genre...</option>
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="age" class="font-weight-bold">Tranche d'âge <span class="text-danger">*</span></label>
+                            <select name="age" required id="age" class="form-control">
+                                <option value="">Choisir la tranche d'âge...</option>
+                                <option value="0-18">Moins de 18 ans</option>
+                                <option value="18-25">18 - 25 ans</option>
+                                <option value="26-40">26 - 40 ans</option>
+                                <option value="41-60">41 - 60 ans</option>
+                                <option value="60+">Plus de 60 ans</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="address" class="font-weight-bold">Adresse <span class="text-danger">*</span></label>
+                        <input name="address" type="text" required class="form-control" id="address" 
+                            placeholder="Rue, Secteur, Immeuble...">
+                    </div>
+
+                    <div class="form-row mb-4">
+                        <div class="form-group col-md-6">
+                            <label for="city" class="font-weight-bold">Ville <span class="text-danger">*</span></label>
+                            <input name="city" required type="text" class="form-control" id="city" 
+                                placeholder="Ouagadougou, Bobo-Dioulasso...">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="zip" class="font-weight-bold">Code Postal / Boîte Postale <span class="text-danger">*</span></label>
+                            <input name="zip" required type="text" class="form-control" id="zip" 
+                                placeholder="BP 0000">
+                        </div>
+                    </div>
+
+                    <div class="text-right pt-3 border-top border-secondary">
+                        <a href="{% url 'home' %}" class="btn btn-outline-light px-4 mr-2">Annuler</a>
+                        <button type="submit" class="btn btn-primary px-4 font-weight-bold">
+                            Enregistrer le client
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

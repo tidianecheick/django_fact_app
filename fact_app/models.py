@@ -186,11 +186,10 @@ class Invoice(models.Model):
     @property
     def get_total(self):
         articles = self.article_set.all()
-        total = sum(
-            article.get_total
-            for article in articles
-        )
-        return total
+        if articles.exists():
+            return sum(article.get_total for article in articles)
+        return self.total or 0
+
 
 
 class Article(models.Model):

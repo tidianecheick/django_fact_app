@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<br>
+
+<!-- Alert for automatic download if ?download=1 -->
+<div id="auto-download-alert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+    <strong><i class="fas fa-check-circle"></i> Félicitations !</strong> Votre facture a été enregistrée avec succès. Le téléchargement du PDF commence automatiquement. Si rien ne se passe, cliquez sur le bouton <strong>Télécharger PDF</strong> ci-dessous.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-lg border-0 mb-4" style="background-color: #272E48; color: #bcd0f7;">
+            <div class="card-body p-4">
+                
+                <!-- Action Buttons Bar -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary">
+                    <div>
+                        <a href="{% url 'home' %}" class="btn btn-outline-light btn-sm mr-2 mb-2">
+                            &larr; Retour à la liste
+                        </a>
+                        <a href="{% url 'add-invoice' %}" class="btn btn-outline-info btn-sm mb-2">
+                            + Nouvelle facture
+                        </a>
+                    </div>
+                    <div>
+                        <a id="btn-download-pdf" href="{% url 'invoice-pdf' pk=obj.pk %}" class="btn btn-primary btn-sm mr-2 mb-2 shadow">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download mr-1" viewBox="0 0 16 16">
+                              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                            </svg>
+                            Télécharger PDF
+                        </a>
+                        <button onclick="window.print()" class="btn btn-secondary btn-sm mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer mr-1" viewBox="0 0 16 16">
+                              <path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                              <path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/>
+                            </svg>
+                            Imprimer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Invoice Header -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <h2 class="text-white font-weight-bold mb-1">TIDIANE SERVICE</h2>
+                        <p class="text-muted mb-0">Système de gestion et facturation</p>
+                        <small class="text-muted">Burkina Faso &bull; Ouagadougou</small>
+                    </div>
+                    <div class="col-md-6 text-md-right">
+                        <span class="badge badge-info p-2 font-weight-normal mb-2" style="font-size: 0.95rem;">
+                            {{ obj.get_invoice_type_display }}
+                        </span>
+                        <h4 class="text-white font-weight-bold">Facture #{{ obj.id }}</h4>
+                        <p class="text-muted mb-0">Date : {{ obj.invoice_date_time|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <!-- Client & Status Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 rounded" style="background-color: #1a233a;">
+                            <h6 class="text-uppercase text-info font-weight-bold mb-2">Informations du Client</h6>
+                            <h5 class="text-white mb-1">{{ obj.customer.name }}</h5>
+                            <p class="mb-1"><strong class="text-muted">Adresse :</strong> {{ obj.customer.address|default:"Non spécifiée" }}, {{ obj.customer.city }}</p>
+                            <p class="mb-1"><strong class="text-muted">Téléphone :</strong> {{ obj.customer.phone|default:"Non spécifié" }}</p>
+                            <p class="mb-0"><strong class="text-muted">Email :</strong> {{ obj.customer.email|default:"Non spécifié" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="p-3 rounded" style="background-color: #1a233a;">
+                            <h6 class="text-uppercase text-info font-weight-bold mb-2">Statut de la Facture</h6>
+                            <p class="mb-2">
+                                <strong class="text-muted">Statut de paiement :</strong> 
+                                {% if obj.paid %}
+                                    <span class="badge badge-success px-2 py-1">PAYÉ</span>
+                                {% else %}
+                                    <span class="badge badge-danger px-2 py-1">NON PAYÉ</span>
+                                {% endif %}
+                            </p>
+                            <p class="mb-2"><strong class="text-muted">Enregistré par :</strong> {{ obj.save_by.username|default:"Administrateur" }}</p>
+                            <p class="mb-0"><strong class="text-muted">Dernière mise à jour :</strong> {{ obj.last_update_date|date:"d/m/Y H:i"|default:obj.invoice_date_time|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Articles Table -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-striped" style="background-color: #1a243a; color: #bcd0f7;">
+                        <thead style="background-color: #2f71c1; color: #ffffff;">
+                            <tr>
+                                <th style="width: 5%;" class="text-center">#</th>
+                                <th style="width: 45%;">Désignation de l'article</th>
+                                <th style="width: 15%;" class="text-center">Quantité</th>
+                                <th style="width: 15%;" class="text-right">Prix Unitaire</th>
+                                <th style="width: 20%;" class="text-right">Sous-total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in articles %}
+                            <tr>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td class="font-weight-bold text-white">{{ article.name }}</td>
+                                <td class="text-center">{{ article.quantity }}</td>
+                                <td class="text-right">{{ article.unit_price }} FCFA</td>
+                                <td class="text-right font-weight-bold text-info">{{ article.get_total }} FCFA</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-3">Aucun article enregistré pour cette facture.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Summary & Comments -->
+                <div class="row">
+                    <div class="col-md-7 mb-3">
+                        {% if obj.comments %}
+                        <div class="p-3 rounded h-100" style="background-color: #1a233a; border-left: 4px solid #f59e0b;">
+                            <h6 class="text-warning font-weight-bold mb-1">Commentaires / Observations :</h6>
+                            <p class="mb-0 text-white">{{ obj.comments }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-5">
+                        <div class="p-3 rounded" style="background-color: #1a233a;">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Sous-total :</span>
+                                <span class="font-weight-bold">{{ obj.get_total }} FCFA</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">TVA &amp; Frais :</span>
+                                <span>0.00 FCFA</span>
+                            </div>
+                            <hr class="border-secondary my-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="text-white mb-0 font-weight-bold">Total :</h5>
+                                <h4 class="text-success mb-0 font-weight-bold">{{ obj.get_total }} FCFA</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center mt-5 pt-3 border-top border-secondary text-muted">
+                    <small>Merci pour votre confiance ! Système de Gestion des Factures Django.</small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Auto-download triggers when ?download=1 is in URL
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('download') === '1') {
+            const alertBox = document.getElementById('auto-download-alert');
+            if (alertBox) {
+                alertBox.classList.remove('d-none');
+            }
+            // Trigger automatic download via a hidden iframe
+            setTimeout(function() {
+                const downloadUrl = "{% url 'invoice-pdf' pk=obj.pk %}";
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = downloadUrl;
+                document.body.appendChild(iframe);
+            }, 600);
+        }
+    });
+</script>
+
+{% endblock content %}
